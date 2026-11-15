@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>TikTok-Verbindung – UCG Deals</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  #code { font-family: monospace; word-break: break-all; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
+  button { margin-top: 12px; padding: 10px 18px; border: 0; border-radius: 8px; background: #e1306c; color: #fff; font-size: 1em; cursor: pointer; }
+  .err { color: #b00020; }
+</style>
+</head>
+<body>
+<main>
+  <h1>TikTok-Verbindung</h1>
+  <div id="out">Lade …</div>
+</main>
+<script>
+  // Diese Seite verschickt nichts. Sie zeigt nur den Code aus der Adresszeile an.
+  var p = new URLSearchParams(location.search);
+  var out = document.getElementById("out");
+  var esc = function (s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; };
+  if (p.get("error")) {
+    out.innerHTML = '<p class="err">Die Verbindung wurde nicht erlaubt oder ist fehlgeschlagen.</p><p>Fehler: ' +
+      esc(p.get("error")) + (p.get("error_description") ? " – " + esc(p.get("error_description")) : "") + "</p>";
+  } else if (p.get("code")) {
+    var payload = p.get("code") + (p.get("state") ? "|" + p.get("state") : "");
+    out.innerHTML = "<p>Fast fertig! Kopiere diesen Code und füge ihn im Fenster des UCG-Deals-Skripts ein:</p>" +
+      '<div id="code">' + esc(payload) + "</div>" +
+      '<button id="copy">Code kopieren</button><p id="msg"></p>' +
+      "<p><small>Der Code ist nur wenige Minuten gültig und funktioniert nur einmal.</small></p>";
+    document.getElementById("copy").onclick = function () {
+      navigator.clipboard.writeText(payload).then(function () {
+        document.getElementById("msg").textContent = "Kopiert ✓";
+      });
+    };
+    history.replaceState(null, "", location.pathname); // Code aus der Adresszeile entfernen
+  } else {
+    out.innerHTML = "<p>Diese Seite wird nur bei der Verbindung mit TikTok benötigt.</p>";
+  }
+</script>
+</body>
+</html>
